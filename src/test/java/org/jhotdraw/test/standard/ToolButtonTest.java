@@ -4,7 +4,7 @@
  * Project:		JHotdraw - a GUI framework for technical drawings
  *				http://www.jhotdraw.org
  *				http://jhotdraw.sourceforge.net
- * Copyright:	© by the original author(s) and all contributors
+ * Copyright:	(c) by the original author(s) and all contributors
  * License:		Lesser GNU Public License (LGPL)
  *				http://www.opensource.org/licenses/lgpl-license.html
  */
@@ -12,6 +12,7 @@ package org.jhotdraw.test.standard;
 
 // JUnitDoclet begin import
 import org.jhotdraw.application.DrawApplication;
+import org.jhotdraw.util.Iconkit;
 import org.jhotdraw.framework.Tool;
 import org.jhotdraw.standard.SelectionTool;
 import org.jhotdraw.standard.ToolButton;
@@ -72,6 +73,7 @@ extends JHDTestCase
 	protected void setUp() throws Exception {
 		// JUnitDoclet begin method testcase.setUp
 		super.setUp();
+        new Iconkit(getDrawingEditor());
 		toolbutton = createInstance();
 		// JUnitDoclet end method testcase.setUp
 	}
