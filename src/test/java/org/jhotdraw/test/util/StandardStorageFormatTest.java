@@ -4,7 +4,7 @@
  * Project:		JHotdraw - a GUI framework for technical drawings
  *				http://www.jhotdraw.org
  *				http://jhotdraw.sourceforge.net
- * Copyright:	© by the original author(s) and all contributors
+ * Copyright:	(c) by the original author(s) and all contributors
  * License:		Lesser GNU Public License (LGPL)
  *				http://www.opensource.org/licenses/lgpl-license.html
  */
@@ -95,7 +95,7 @@ extends TestCase
 	// JUnitDoclet end javadoc_method setFileExtension()
 	public void testSetGetFileExtension() throws Exception {
 		// JUnitDoclet begin method setFileExtension getFileExtension
-		java.lang.String[] tests = { "", " ", "a", "A", "ä", "ß", "0123456789", "012345678901234567890", "\n", null };
+		java.lang.String[] tests = { "", " ", "a", "A", "\u00c4", "\u00df", "0123456789", "012345678901234567890", "\n", null };
 
 		for (int i = 0; i < tests.length; i++) {
 			standardstorageformat.setFileExtension(tests[i]);
@@ -126,7 +126,7 @@ extends TestCase
 	// JUnitDoclet end javadoc_method setFileDescription()
 	public void testSetGetFileDescription() throws Exception {
 		// JUnitDoclet begin method setFileDescription getFileDescription
-		java.lang.String[] tests = { "", " ", "a", "A", "ä", "ß", "0123456789", "012345678901234567890", "\n", null };
+		java.lang.String[] tests = { "", " ", "a", "A", "\u00c4", "\u00df", "0123456789", "012345678901234567890", "\n", null };
 
 		for (int i = 0; i < tests.length; i++) {
 			standardstorageformat.setFileDescription(tests[i]);
