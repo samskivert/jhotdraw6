@@ -9,6 +9,7 @@
   <property name="deploy.dir" value="dist"/>
 
   <property name="detyper.jar" value="/home/mdb/research/ductilej/dist/detyper.jar"/>
+  <property name="langtools.dir" value="/home/mdb/research/langtools"/>
 
   <path id="clazzpath">
     <fileset dir="${deploy.dir}/lib" includes="**/*.jar"/>
@@ -33,7 +34,7 @@
   </target>
 
   <target name="compile" depends="prepare">
-    <javac fork="yes" executable="/home/mdb/research/langtools/dist/bin/javac"
+    <javac fork="yes" executable="${lantools.dir}/dist/bin/javac"
            destdir="${deploy.dir}/classes" debug="on" includeAntRuntime="no"
            source="1.6" target="1.6">
       <src path="${src.dir}"/>
