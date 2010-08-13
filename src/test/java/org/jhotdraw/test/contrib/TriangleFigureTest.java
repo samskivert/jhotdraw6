@@ -10,6 +10,8 @@
  */
 package org.jhotdraw.test.contrib;
 
+import java.awt.Point;
+
 import org.jhotdraw.contrib.TriangleFigure;
 import junit.framework.TestCase;
 // JUnitDoclet begin import
@@ -56,7 +58,7 @@ extends TestCase
 	 */
 	public TriangleFigure createInstance() throws Exception {
 		// JUnitDoclet begin method testcase.createInstance
-		return new TriangleFigure();
+		return new TriangleFigure(new Point(0, 0), new Point(10, 10));
 		// JUnitDoclet end method testcase.createInstance
 	}
 
@@ -147,6 +149,17 @@ extends TestCase
 	// JUnitDoclet end javadoc_method containsPoint()
 	public void testContainsPoint() throws Exception {
 		// JUnitDoclet begin method containsPoint
+        for (int yy = 0; yy <= 10; yy++) {
+            for (int xx = 0; xx <= 10; xx++) {
+                assertEquals(CONTAINS_SAMPLES[yy][xx], trianglefigure.containsPoint(xx, yy));
+            }
+        }
+        // also try some definitely out of bounds points
+        assertFalse(trianglefigure.containsPoint(10, 15));
+        assertFalse(trianglefigure.containsPoint(15, 15));
+        assertFalse(trianglefigure.containsPoint(15, 10));
+        assertFalse(trianglefigure.containsPoint(-15, -15));
+        assertFalse(trianglefigure.containsPoint(-1, -1));
 		// JUnitDoclet end method containsPoint
 	}
 
@@ -229,4 +242,16 @@ extends TestCase
 		// JUnitDoclet end method testcase.testVault
 	}
 
+    protected static final boolean[][] CONTAINS_SAMPLES = {
+        { false, false, false, false, false, false, false, false, false, false, false },
+        { false, false, false, false, false, true , false, false, false, false, false },
+        { false, false, false, false, true , true , false, false, false, false, false },
+        { false, false, false, false, true , true , true , false, false, false, false },
+        { false, false, false, true , true , true , true , false, false, false, false },
+        { false, false, false, true , true , true , true , true , false, false, false },
+        { false, false, true , true , true , true , true , true , false, false, false },
+        { false, false, true , true , true , true , true , true , true , false, false },
+        { false, true , true , true , true , true , true , true , true , false, false },
+        { false, true , true , true , true , true , true , true , true , true , false },
+        { false, false, false, false, false, false, false, false, false, false, false }};
 }
