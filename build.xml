@@ -1,69 +1,87 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!-- You may freely edit this file. See commented blocks below for -->
-<!-- some examples of how to customize the build. -->
-<!-- (If you delete it and reopen the project it will be recreated.) -->
-<project name="JHotDraw6" default="default" basedir=".">
-    <description>Builds, tests, and runs the project JHotDraw6.</description>
-    <import file="nbproject/build-impl.xml"/>
-    <!--
+<!-- stock build configuration -->
+<project name="stock" default="compile" basedir=".">
 
-    There exist several targets which are by default empty and which can be 
-    used for execution of your tasks. These targets are usually executed 
-    before and after some main targets. They are: 
+  <property name="app.ident" value="JHotDraw6"/>
+  <property name="src.dir" value="src/main/java"/>
+  <property name="j2ee.dir" value="src/main/J2EE"/>
+  <property name="test.dir" value="src/test/java"/>
+  <property name="rsrc.dir" value="src/main/resources"/>
+  <property name="deploy.dir" value="dist"/>
 
-      -pre-init:                 called before initialization of project properties
-      -post-init:                called after initialization of project properties
-      -pre-compile:              called before javac compilation
-      -post-compile:             called after javac compilation
-      -pre-compile-single:       called before javac compilation of single file
-      -post-compile-single:      called after javac compilation of single file
-      -pre-compile-test:         called before javac compilation of JUnit tests
-      -post-compile-test:        called after javac compilation of JUnit tests
-      -pre-compile-test-single:  called before javac compilation of single JUnit test
-      -post-compile-test-single: called after javac compilation of single JUunit test
-      -pre-jar:                  called before JAR building
-      -post-jar:                 called after JAR building
-      -post-clean:               called after cleaning build products
+  <property name="detyper.jar" value="/home/mdb/research/ductilej/dist/detyper.jar"/>
 
-    (Targets beginning with '-' are not intended to be called on their own.)
+  <path id="clazzpath">
+    <fileset dir="${deploy.dir}/lib" includes="**/*.jar"/>
+    <pathelement location="${deploy.dir}/classes"/>
+  </path>
 
-    Example of inserting an obfuscator after compilation could look like this:
+  <target name="clean">
+    <delete dir="${deploy.dir}"/>
+  </target>
 
-        <target name="-post-compile">
-            <obfuscate>
-                <fileset dir="${build.classes.dir}"/>
-            </obfuscate>
-        </target>
+  <target name="prepare">
+    <mkdir dir="${deploy.dir}"/>
+    <mkdir dir="${deploy.dir}/classes"/>
+    <mkdir dir="${deploy.dir}/lib"/>
+    <copy todir="${deploy.dir}/lib" flatten="true">
+      <fileset dir="lib" includes="*.jar"/>
+    </copy>
+    <copy todir="${deploy.dir}/classes">
+      <fileset dir="${src.dir}" includes="**/*.gif"/>
+      <fileset dir="${rsrc.dir}" includes="**/*.gif"/>
+    </copy>
+  </target>
 
-    For list of available properties check the imported 
-    nbproject/build-impl.xml file. 
+  <target name="compile" depends="prepare">
+    <javac fork="yes" executable="/home/mdb/research/langtools/dist/bin/javac"
+           destdir="${deploy.dir}/classes" debug="on" includeAntRuntime="no"
+           source="1.6" target="1.6">
+      <src path="${src.dir}"/>
+      <src path="${j2ee.dir}"/>
+      <src path="${test.dir}"/>
+      <classpath>
+        <path refid="clazzpath"/>
+        <pathelement location="${detyper.jar}"/>
+      </classpath>
+      <compilerarg value="-Xlint"/>
+      <compilerarg value="-Xlint:-serial"/>
+      <compilerarg value="-Xlint:-unchecked"/>
+      <compilerarg value="-Xlint:-rawtypes"/>
+      <compilerarg value="-Xlint:-dep-ann"/>
+      <compilerarg value="-Aorg.ductilej.writeclass=${writeclass}"/>
+     </javac>
+  </target>
 
+  <target name="tests" depends="compile">
+    <taskdef name="unit"
+      classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask"/>
+    <property name="test" value=""/>
+    <unit printsummary="off" haltonfailure="yes" fork="false">
+      <classpath>
+        <path refid="clazzpath"/>
+        <pathelement location="${detyper.jar}"/>
+      </classpath>
+      <!--<sysproperty key="test_dir" value="${basedir}"/>-->
+      <formatter type="brief" usefile="false"/>
+      <batchtest>
+        <fileset dir="${test.dir}">
+          <include name="**/${test}*Test.java"/>
+        </fileset>
+      </batchtest>
+    </unit>
+  </target>
 
-    Another way to customize the build is by overriding existing main targets.
-    The targets of interest are: 
+  <target name="dist" depends="compile">
+    <jar destfile="${deploy.dir}/${app.ident}.jar" basedir="${deploy.dir}/classes"/>
+  </target>
 
-      -init-macrodef-javac:     defines macro for javac compilation
-      -init-macrodef-junit:     defines macro for junit execution
-      -init-macrodef-debug:     defines macro for class debugging
-      -init-macrodef-java:      defines macro for class execution
-      -do-jar-with-manifest:    JAR building (if you are using a manifest)
-      -do-jar-without-manifest: JAR building (if you are not using a manifest)
-      run:                      execution of project 
-      -javadoc-build:           Javadoc generation
-      test-report:              JUnit report generation
+  <target name="app" depends="compile">
+    <java classname="org.jhotdraw.contrib.SVGDrawApp" fork="true">
+      <classpath>
+        <path refid="clazzpath"/>
+        <pathelement location="${detyper.jar}"/>
+      </classpath>
+    </java>
+  </target>
 
-    An example of overriding the target for project execution could look like this:
-
-        <target name="run" depends="JHotDraw6-impl.jar">
-            <exec dir="bin" executable="launcher.exe">
-                <arg file="${dist.jar}"/>
-            </exec>
-        </target>
-
-    Notice that the overridden target depends on the jar target and not only on 
-    the compile target as the regular run target does. Again, for a list of available 
-    properties which you can use, check the target you are overriding in the
-    nbproject/build-impl.xml file. 
-
-    -->
 </project>
