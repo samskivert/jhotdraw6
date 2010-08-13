@@ -4,7 +4,7 @@
  * Project:		JHotdraw - a GUI framework for technical drawings
  *				http://www.jhotdraw.org
  *				http://jhotdraw.sourceforge.net
- * Copyright:	© by the original author(s) and all contributors
+ * Copyright:	(c) by the original author(s) and all contributors
  * License:		Lesser GNU Public License (LGPL)
  *				http://www.opensource.org/licenses/lgpl-license.html
  */
@@ -22,7 +22,7 @@ import org.jhotdraw.framework.Painter;
 * This painter draws a grid as background for the drawing view
 * </p>
 *
-* @author Jorge Manrubia Díez
+* @author Jorge Manrubia Diez
 * @version 1.0
 */
 public class GridPainter implements Painter {
@@ -80,7 +80,7 @@ public class GridPainter implements Painter {
 		int height = size.height;
 		for (int x = 0; x < width; x += getHorizontalSeparation()) {
 			for (int y = 0; y < height; y += getVerticalSeparation()) {
-				g.drawRect(x, y, 0, 0); //Es lo más eficiente para colorea pixeles
+				g.drawRect(x, y, 0, 0); //Es lo mas eficiente para colorea pixeles
 			}
 		}
 	}

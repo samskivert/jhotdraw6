@@ -4,7 +4,7 @@
  * Project:		JHotdraw - a GUI framework for technical drawings
  *				http://www.jhotdraw.org
  *				http://jhotdraw.sourceforge.net
- * Copyright:	© by the original author(s) and all contributors
+ * Copyright:	(c) by the original author(s) and all contributors
  * License:		Lesser GNU Public License (LGPL)
  *				http://www.opensource.org/licenses/lgpl-license.html
  */
@@ -24,6 +24,8 @@ import org.jhotdraw.figures.*;
 import org.jhotdraw.framework.*;
 import org.jhotdraw.standard.*;
 import org.jhotdraw.util.*;
+
+import org.jhotdraw.contrib.Desktop; // avoid collision with java.awt.Desktop
 
 /**
  * DrawApplication defines a standard presentation for
