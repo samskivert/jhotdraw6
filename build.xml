@@ -34,7 +34,7 @@
   </target>
 
   <target name="compile" depends="prepare">
-    <javac fork="yes" executable="${lantools.dir}/dist/bin/javac"
+    <javac fork="yes" executable="${langtools.dir}/dist/bin/javac"
            destdir="${deploy.dir}/classes" debug="on" includeAntRuntime="no"
            source="1.6" target="1.6">
       <src path="${src.dir}"/>
