@@ -1,0 +1,351 @@
+diff --git a/src/main/java/org/jhotdraw/contrib/CompositeFigureCreationTool.java b/src/main/java/org/jhotdraw/contrib/CompositeFigureCreationTool.java
+index 4391a1f..1d58d2c 100644
+--- a/src/main/java/org/jhotdraw/contrib/CompositeFigureCreationTool.java
++++ b/src/main/java/org/jhotdraw/contrib/CompositeFigureCreationTool.java
+@@ -34,13 +34,14 @@ public class CompositeFigureCreationTool extends CreationTool {
+ 	public void mouseDown(MouseEvent e, int x, int y) {
+ 		setView((DrawingView)e.getSource());
+ 		Figure figure = drawing().findFigure(e.getX(), e.getY());
++        Point p = new Point(x, y);
+ 		if (figure != null) {
+ 			figure = figure.getDecoratedFigure();
+ 			if (figure instanceof CompositeFigure) {
+ 				setContainerFigure((CompositeFigure)figure);
+ 				setCreatedFigure(createFigure());
+ 				setAddedFigure((getContainerFigure().add(getCreatedFigure())));
+-				getAddedFigure().displayBox(new Point(x, y), new Point(x, y));
++				getAddedFigure().displayBox(p, p);
+ 			}
+ 			else {
+ 				toolDone();
+@@ -52,7 +53,7 @@ public class CompositeFigureCreationTool extends CreationTool {
+ 	}
+ 
+ 	public void mouseMove(MouseEvent e, int x, int y) {
+-		if ((getContainerFigure() != null) && !getContainerFigure().containsPoint(e.getX(), e.getY())) {
++		if ((getContainerFigure() != null) && !getContainerFigure().containsPoint(e.getPoint())) {
+ 			// here you might want to constrain the mouse movements to the size of the
+ 			// container figure: not sure whether this works...
+ 			toolDone();
+diff --git a/src/main/java/org/jhotdraw/contrib/NestedCreationTool.java b/src/main/java/org/jhotdraw/contrib/NestedCreationTool.java
+index 5df62d4..fdcac5f 100644
+--- a/src/main/java/org/jhotdraw/contrib/NestedCreationTool.java
++++ b/src/main/java/org/jhotdraw/contrib/NestedCreationTool.java
+@@ -16,6 +16,7 @@ import org.jhotdraw.standard.CompositeFigure;
+ import org.jhotdraw.framework.Figure;
+ import org.jhotdraw.framework.DrawingEditor;
+ 
++import java.awt.Point;
+ import java.awt.event.MouseEvent;
+ 
+ /**
+@@ -47,7 +48,7 @@ public class NestedCreationTool extends CreationTool {
+ 	}
+ 
+ 	public void mouseMove(MouseEvent e, int x, int y) {
+-		if ((getContainerFigure() != null) && !getContainerFigure().containsPoint(e.getX(), e.getY())) {
++		if ((getContainerFigure() != null) && !getContainerFigure().containsPoint(e.getPoint())) {
+ 			// here you might want to constrain the mouse movements to the size of the
+ 			// container figure: not sure whether this works...
+ 			toolDone();
+@@ -59,7 +60,7 @@ public class NestedCreationTool extends CreationTool {
+ 
+ 	public void mouseUp(MouseEvent e, int x, int y) {
+ 		if ((getContainerFigure() != null) && (getCreatedFigure() != null)
+-				&& getContainerFigure().containsPoint(e.getX(), e.getY())) {
++            && getContainerFigure().containsPoint(e.getPoint())) {
+ 			getContainerFigure().add(getCreatedFigure());
+ 		}
+ 		toolDone();
+diff --git a/src/main/java/org/jhotdraw/contrib/PolygonFigure.java b/src/main/java/org/jhotdraw/contrib/PolygonFigure.java
+index 68cf7d6..bd01676 100644
+--- a/src/main/java/org/jhotdraw/contrib/PolygonFigure.java
++++ b/src/main/java/org/jhotdraw/contrib/PolygonFigure.java
+@@ -130,8 +130,8 @@ public  class PolygonFigure extends AttributeFigure {
+ 		g.drawPolygon(getInternalPolygon());
+ 	}
+ 
+-	public boolean containsPoint(int x, int y) {
+-		return getInternalPolygon().contains(x, y);
++	public boolean containsPoint(Point p) {
++		return getInternalPolygon().contains(p);
+ 	}
+ 
+ 	public Connector connectorAt(int x, int y) {
+diff --git a/src/main/java/org/jhotdraw/contrib/TriangleFigure.java b/src/main/java/org/jhotdraw/contrib/TriangleFigure.java
+index 2a40e59..fd45460 100644
+--- a/src/main/java/org/jhotdraw/contrib/TriangleFigure.java
++++ b/src/main/java/org/jhotdraw/contrib/TriangleFigure.java
+@@ -149,8 +149,8 @@ public  class TriangleFigure extends RectangleFigure {
+ 		}
+ 	}
+ 
+-	public boolean containsPoint(int x, int y) {
+-		return getPolygon().contains(x, y);
++	public boolean containsPoint(Point p) {
++		return getPolygon().contains(p);
+ 	}
+ 
+ 	public Point center() {
+diff --git a/src/main/java/org/jhotdraw/contrib/dnd/DragNDropTool.java b/src/main/java/org/jhotdraw/contrib/dnd/DragNDropTool.java
+index ec12aea..bb2cf4c 100644
+--- a/src/main/java/org/jhotdraw/contrib/dnd/DragNDropTool.java
++++ b/src/main/java/org/jhotdraw/contrib/dnd/DragNDropTool.java
+@@ -292,7 +292,7 @@ public class DragNDropTool extends AbstractTool {
+ 		//				System.out.println("origin at " + p);
+ 					while (selectedElements.hasNextFigure()) {
+ 						Figure f = selectedElements.nextFigure();
+-						if (f.containsPoint(p.x, p.y)) {
++						if (f.containsPoint(p)) {
+ 		/*              Rectangle r = figgy.displayBox();
+ 							sx = r.width;
+ 							sy = r.height;*/
+diff --git a/src/main/java/org/jhotdraw/contrib/html/HTMLTextAreaFigure.java b/src/main/java/org/jhotdraw/contrib/html/HTMLTextAreaFigure.java
+index ef7a06e..29292af 100644
+--- a/src/main/java/org/jhotdraw/contrib/html/HTMLTextAreaFigure.java
++++ b/src/main/java/org/jhotdraw/contrib/html/HTMLTextAreaFigure.java
+@@ -237,8 +237,8 @@ public class HTMLTextAreaFigure extends TextAreaFigure
+ 	 * @param y  Description of the Parameter
+ 	 * @return   Description of the Return Value
+ 	 */
+-	public boolean containsPoint(int x, int y) {
+-		return getFrameFigure().containsPoint(x, y);
++	public boolean containsPoint(Point p) {
++		return getFrameFigure().containsPoint(p);
+ 	}
+ 
+ 	/**
+diff --git a/src/main/java/org/jhotdraw/framework/Figure.java b/src/main/java/org/jhotdraw/framework/Figure.java
+index 8ab829f..450e813 100644
+--- a/src/main/java/org/jhotdraw/framework/Figure.java
++++ b/src/main/java/org/jhotdraw/framework/Figure.java
+@@ -127,7 +127,7 @@ public interface Figure
+ 	/**
+ 	 * Checks if a point is inside the figure.
+ 	 */
+-	public boolean containsPoint(int x, int y);
++	public boolean containsPoint(Point point);
+ 
+ 	/**
+ 	 * Returns a Clone of this figure
+diff --git a/src/main/java/org/jhotdraw/samples/net/NodeFigure.java b/src/main/java/org/jhotdraw/samples/net/NodeFigure.java
+index c54d8c0..e6ffb5a 100644
+--- a/src/main/java/org/jhotdraw/samples/net/NodeFigure.java
++++ b/src/main/java/org/jhotdraw/samples/net/NodeFigure.java
+@@ -40,15 +40,15 @@ public class NodeFigure extends TextFigure {
+ 		return box;
+ 	}
+ 
+-	public boolean containsPoint(int x, int y) {
++	public boolean containsPoint(Point p) {
+ 		// add slop for connectors
+ 		if (fConnectorsVisible) {
+ 			Rectangle r = displayBox();
+ 			int d = LocatorConnector.SIZE/2;
+ 			r.grow(d, d);
+-			return r.contains(x, y);
++			return r.contains(p);
+ 		}
+-		return super.containsPoint(x, y);
++		return super.containsPoint(p);
+ 	}
+ 
+ 	private void drawBorder(Graphics g) {
+diff --git a/src/main/java/org/jhotdraw/samples/offsetConnectors/NodeFigure.java b/src/main/java/org/jhotdraw/samples/offsetConnectors/NodeFigure.java
+index 5e9cb86..ad8fd5e 100644
+--- a/src/main/java/org/jhotdraw/samples/offsetConnectors/NodeFigure.java
++++ b/src/main/java/org/jhotdraw/samples/offsetConnectors/NodeFigure.java
+@@ -49,15 +49,15 @@ public class NodeFigure extends TextFigure {
+ 		return box;
+ 	}
+ 
+-	public boolean containsPoint(int x, int y) {
++	public boolean containsPoint(Point p) {
+ 		// add slop for connectors
+ 		if (fConnectorsVisible) {
+ 			Rectangle r = displayBox();
+ 			int d = LocatorConnector.SIZE / 2;
+ 			r.grow(d, d);
+-			return r.contains(x, y);
++			return r.contains(p);
+ 		}
+-		return super.containsPoint(x, y);
++		return super.containsPoint(p);
+ 	}
+ 
+ 	private void drawBorder(Graphics g) {
+diff --git a/src/main/java/org/jhotdraw/standard/AbstractConnector.java b/src/main/java/org/jhotdraw/standard/AbstractConnector.java
+index 990303a..220a3a7 100644
+--- a/src/main/java/org/jhotdraw/standard/AbstractConnector.java
++++ b/src/main/java/org/jhotdraw/standard/AbstractConnector.java
+@@ -90,7 +90,7 @@ public abstract class AbstractConnector implements Connector {
+ 	 * Tests if a point is contained in the connector.
+ 	 */
+ 	public boolean containsPoint(int x, int y) {
+-		return owner().containsPoint(x, y);
++		return owner().containsPoint(new Point(x, y));
+ 	}
+ 
+ 	/**
+diff --git a/src/main/java/org/jhotdraw/standard/AbstractFigure.java b/src/main/java/org/jhotdraw/standard/AbstractFigure.java
+index ffc1d91..961e5bb 100644
+--- a/src/main/java/org/jhotdraw/standard/AbstractFigure.java
++++ b/src/main/java/org/jhotdraw/standard/AbstractFigure.java
+@@ -146,7 +146,7 @@ public abstract class AbstractFigure implements Figure {
+ 	 * @see #containsPoint
+ 	 */
+ 	public Figure findFigureInside(int x, int y) {
+-		if (containsPoint(x, y)) {
++		if (containsPoint(new Point(x, y))) {
+ 			return this;
+ 		}
+ 		return null;
+@@ -155,8 +155,8 @@ public abstract class AbstractFigure implements Figure {
+ 	/**
+ 	 * Checks if a point is inside the figure.
+ 	 */
+-	public boolean containsPoint(int x, int y) {
+-		return displayBox().contains(x, y);
++	public boolean containsPoint(Point p) {
++		return displayBox().contains(p);
+ 	}
+ 
+ 	/**
+diff --git a/src/main/java/org/jhotdraw/standard/ChangeConnectionHandle.java b/src/main/java/org/jhotdraw/standard/ChangeConnectionHandle.java
+index f369863..fc61647 100644
+--- a/src/main/java/org/jhotdraw/standard/ChangeConnectionHandle.java
++++ b/src/main/java/org/jhotdraw/standard/ChangeConnectionHandle.java
+@@ -209,10 +209,11 @@ public abstract class ChangeConnectionHandle extends AbstractHandle {
+ 
+ 	private Figure findConnectableFigure(int x, int y, Drawing drawing) {
+ 		FigureEnumeration fe = drawing.figuresReverse();
++        Point p = new Point(x, y);
+ 		while (fe.hasNextFigure()) {
+ 			Figure figure = fe.nextFigure();
+ 			if (!figure.includes(getConnection()) && figure.canConnect()) {
+-				if (figure.containsPoint(x, y)) {
++				if (figure.containsPoint(p)) {
+ 					return figure;
+ 				}
+ 			}
+diff --git a/src/main/java/org/jhotdraw/standard/CompositeFigure.java b/src/main/java/org/jhotdraw/standard/CompositeFigure.java
+index b0ca530..7930618 100644
+--- a/src/main/java/org/jhotdraw/standard/CompositeFigure.java
++++ b/src/main/java/org/jhotdraw/standard/CompositeFigure.java
+@@ -433,9 +433,10 @@ public abstract class CompositeFigure
+ 	 */
+ 	public Figure findFigure(int x, int y) {
+ 		FigureEnumeration fe = figuresReverse();
++        Point p = new Point(x, y);
+ 		while (fe.hasNextFigure()) {
+ 			Figure figure = fe.nextFigure();
+-			if (figure.containsPoint(x, y)) {
++			if (figure.containsPoint(p)) {
+ 				return figure;
+ 			}
+ 		}
+@@ -472,9 +473,10 @@ public abstract class CompositeFigure
+ 		}
+ 
+ 		FigureEnumeration fe = figuresReverse();
++        Point p = new Point(x, y);
+ 		while (fe.hasNextFigure()) {
+ 			Figure figure = fe.nextFigure();
+-			if (figure.containsPoint(x, y) && !figure.includes(without)) {
++			if (figure.containsPoint(p) && !figure.includes(without)) {
+ 				return figure;
+ 			}
+ 		}
+@@ -519,7 +521,7 @@ public abstract class CompositeFigure
+ 		}
+ 
+ 		// bug-fix: 661878
+-		if (containsPoint(x, y)) {
++		if (containsPoint(new Point(x, y))) {
+ 			return this;
+ 		}
+ 		else {
+@@ -549,7 +551,7 @@ public abstract class CompositeFigure
+ 			}
+ 		}
+ 
+-		if (containsPoint(x, y)) {
++		if (containsPoint(new Point(x, y))) {
+ 			return this;
+ 		}
+ 		else {
+diff --git a/src/main/java/org/jhotdraw/standard/ConnectionHandle.java b/src/main/java/org/jhotdraw/standard/ConnectionHandle.java
+index 43c4ea5..9e52e6a 100644
+--- a/src/main/java/org/jhotdraw/standard/ConnectionHandle.java
++++ b/src/main/java/org/jhotdraw/standard/ConnectionHandle.java
+@@ -167,10 +167,11 @@ public  class ConnectionHandle extends LocatorHandle {
+ 
+ 	private Figure findConnectableFigure(int x, int y, Drawing drawing) {
+ 		FigureEnumeration fe = drawing.figuresReverse();
++        Point p = new Point(x, y);
+ 		while (fe.hasNextFigure()) {
+ 			Figure figure = fe.nextFigure();
+ 			if (!figure.includes(getConnection()) && figure.canConnect() 
+-				&& figure.containsPoint(x, y)) {
++				&& figure.containsPoint(p)) {
+ 				return figure;
+ 			}
+ 		}
+diff --git a/src/main/java/org/jhotdraw/standard/ConnectionTool.java b/src/main/java/org/jhotdraw/standard/ConnectionTool.java
+index 90f1cb2..5aa855d 100644
+--- a/src/main/java/org/jhotdraw/standard/ConnectionTool.java
++++ b/src/main/java/org/jhotdraw/standard/ConnectionTool.java
+@@ -325,10 +325,11 @@ public  class ConnectionTool extends AbstractTool {
+ 	 */
+ 	protected Figure findConnectableFigure(int x, int y, Drawing drawing) {
+ 		FigureEnumeration fe = drawing.figuresReverse();
++        Point p = new Point(x, y);
+ 		while (fe.hasNextFigure()) {
+ 			Figure figure = fe.nextFigure();
+ 			if (!figure.includes(getConnection()) && figure.canConnect()
+-				&& figure.containsPoint(x, y)) {
++				&& figure.containsPoint(p)) {
+ 				return figure;
+ 			}
+ 		}
+diff --git a/src/main/java/org/jhotdraw/standard/DecoratorFigure.java b/src/main/java/org/jhotdraw/standard/DecoratorFigure.java
+index 3798e17..513d136 100644
+--- a/src/main/java/org/jhotdraw/standard/DecoratorFigure.java
++++ b/src/main/java/org/jhotdraw/standard/DecoratorFigure.java
+@@ -84,8 +84,8 @@ public abstract class DecoratorFigure
+ 	/**
+ 	 * Forwards containsPoint to its contained figure.
+ 	 */
+-	public boolean containsPoint(int x, int y) {
+-		return getDecoratedFigure().containsPoint(x, y);
++	public boolean containsPoint(Point p) {
++		return getDecoratedFigure().containsPoint(p);
+ 	}
+ 
+ 	/**
+diff --git a/src/test/java/org/jhotdraw/test/contrib/TriangleFigureTest.java b/src/test/java/org/jhotdraw/test/contrib/TriangleFigureTest.java
+index beaf076..37d2e93 100644
+--- a/src/test/java/org/jhotdraw/test/contrib/TriangleFigureTest.java
++++ b/src/test/java/org/jhotdraw/test/contrib/TriangleFigureTest.java
+@@ -151,15 +151,15 @@ extends TestCase
+ 		// JUnitDoclet begin method containsPoint
+         for (int yy = 0; yy <= 10; yy++) {
+             for (int xx = 0; xx <= 10; xx++) {
+-                assertEquals(CONTAINS_SAMPLES[yy][xx], trianglefigure.containsPoint(xx, yy));
++                assertEquals(CONTAINS_SAMPLES[yy][xx], trianglefigure.containsPoint(new Point(xx, yy)));
+             }
+         }
+         // also try some definitely out of bounds points
+-        assertFalse(trianglefigure.containsPoint(10, 15));
+-        assertFalse(trianglefigure.containsPoint(15, 15));
+-        assertFalse(trianglefigure.containsPoint(15, 10));
+-        assertFalse(trianglefigure.containsPoint(-15, -15));
+-        assertFalse(trianglefigure.containsPoint(-1, -1));
++        assertFalse(trianglefigure.containsPoint(new Point(10, 15)));
++        assertFalse(trianglefigure.containsPoint(new Point(15, 15)));
++        assertFalse(trianglefigure.containsPoint(new Point(15, 10)));
++        assertFalse(trianglefigure.containsPoint(new Point(-15, -15)));
++        assertFalse(trianglefigure.containsPoint(new Point(-1, -1)));
+ 		// JUnitDoclet end method containsPoint
+ 	}
+ 
