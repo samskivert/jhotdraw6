@@ -1,0 +1,7 @@
+A trivial fork of the jHotDraw 6 project (http://www.jhotdraw.org) for use in
+evaluating the DuctileJ project (http://code.google.com/p/ductilej/).
+
+We've replaced the build system with one that is simpler and allows us to build
+the code and unit tests in a single compilation pass. We have also repaired
+some of the unit tests which lacked correct initialization. Finally we added
+some actual tests to TriangleFigureTest for our own nefarious purposes.
